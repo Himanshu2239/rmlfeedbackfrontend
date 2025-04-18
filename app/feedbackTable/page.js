@@ -12,7 +12,7 @@ import { useState, useEffect } from "react";
 
 const headers = [
   { title: "HR INPUT", colspan: 9 },
-  { title: "KRA", colspan: 1 },
+  // { title: "KRA", colspan: 1 },
   { title: "KPI 1", colspan: 2 },
   { title: "KPI 2", colspan: 2 },
   { title: "KPI 3", colspan: 2 },
@@ -41,7 +41,7 @@ const subHeaders = [
   "Achievement",
   "Target",
   "Achievement",
-  "Target",
+  // "Target",
   "Overall KPI Achievement (%)",
   "Knowledge & Expertise (1-5)",
   "Attitude & Approach (1-5)",
@@ -51,9 +51,9 @@ const subHeaders = [
   "Communication Skills (1-5)",
   "Attendance & Punctuality (1-5)",
   "Areas for Improvement",
-  "Training Recommendations",
+  // "Training Recommendations",
   "Confirmation Status",
-  "Rationale",
+  // "Rationale",
   "Remarks"
 ];
 
@@ -113,18 +113,18 @@ export default function FeedbackTable() {
             emp.dateOfJoining ? new Date(emp.dateOfJoining).toLocaleDateString("en-GB") : "",
             emp.reportingHead || "",
             "", // KRA
-            "", "", "", "", "", "", "", "", "", "","", // KPI 1–5
+            "", "", "", "", "", "", "", "", "", "", // KPI 1–5
             "", // Overall KPI Achievement (%)
             "", "", "", "", "", "", "", // Ratings
             "", // Areas for Improvement
-            "", // Training Recommendations
+            // "", // Training Recommendations
             "", // Confirmation Status
-            "", // Rationale
+            // "", // Rationale
             "", // Remarks
           ],
         }));
 
-        console.log("formattedArr", formatted);
+        // console.log("formattedArr", formatted);
 
         setTableData(formatted);
 
@@ -158,6 +158,7 @@ export default function FeedbackTable() {
   4
 
   const handleSubmit = async () => {
+
      // Validate all fields are filled
     const incompleteRows = tableData.filter(row =>
       row.fields.some((field, index) => index > 7 && field.trim() === "")
@@ -259,7 +260,7 @@ export default function FeedbackTable() {
                       <td key={idx} className="border px-2 py-1 min-w-[120px]">
                         {idx <= 7 ? (
                           <div className="text-sm px-1 py-0.5">{cell}</div>
-                        ) : idx === 30 ? (
+                        ) : idx === 28 ? (
                           <select
                             value={cell}
                             onChange={(e) => handleChange(row.id, idx, e.target.value)}
