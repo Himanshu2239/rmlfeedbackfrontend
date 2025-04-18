@@ -225,8 +225,8 @@ export default function FeedbackTable() {
       </div>
       {/* Main Content */}
       <div className="mt-20 m-4">
-        <Card className="overflow-auto w-full">
-          <CardContent className="p-4">
+        <Card className="overflow-auto w-full max-h-[80vh]">
+          <CardContent className="p-2">
             <motion.table
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -283,6 +283,7 @@ export default function FeedbackTable() {
                           <Textarea
                             value={cell}
                             className="min-h-[60px] resize rounded-md border border-gray-300 p-2 text-sm"
+                            // onInput="this.style.height = 'auto'; this.style.height = this.scrollHeight + 'px';"
                             placeholder="Enter text..."
                             onChange={(e) => handleChange(row.id, idx, e.target.value)}
                             onClick={(e) => e.stopPropagation()}
@@ -294,11 +295,11 @@ export default function FeedbackTable() {
                 ))}
               </tbody>
             </motion.table>
-            <div className="flex justify-end mt-4">
-              <Button onClick={handleSubmit}>Submit</Button>
-            </div>
           </CardContent>
         </Card>
+        <div className="flex justify-center mt-2">
+        <Button className="w-24 bg-green-800 text-xl hover:bg-green-900" onClick={handleSubmit}>Submit</Button>
+        </div>
       </div>
     </div>
   );
