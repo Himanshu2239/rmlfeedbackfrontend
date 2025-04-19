@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Card, CardContent } from "@/components/ui/card";
@@ -9,15 +8,17 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast, Toaster } from "sonner"; // Or whatever toast library you're using
 import axios from "axios";
+import { Loader, Loader2 } from "lucide-react";
 
 export default function Page() {
   const [employeeId, setEmployeeId] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const handleLogin = async () => {
     // Password format check (ddmmyyyy)
-    if(!password || !employeeId){
+    if (!password || !employeeId) {
       toast.error("Please enter employeeId and password");
       return;
     }
@@ -25,6 +26,9 @@ export default function Page() {
       toast.error("Password should be in ddmmyyyy format.");
       return;
     }
+
+    setIsLoading(true);
+
 
     try {
       const response = await axios.post('https://feedbackrml.vercel.app/user/login', { employeeId, password });
@@ -43,13 +47,17 @@ export default function Page() {
     } catch (err) {
       console.log("error", err);
       toast.error("An error occurred. Please try again.");
+      setIsLoading(false);
     }
   };
 
+  console.log("isLoading", isLoading);
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 to-blue-300 p-4">
-      <Toaster position="top-right" autoClose={3000}/>
-      <motion.div
+      {isLoading && <Loader2 className="h-10 relative m-auto w-10 animate-spin" />}
+      <Toaster position="top-right" autoClose={3000} />
+      {!isLoading && <motion.div
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
@@ -83,7 +91,7 @@ export default function Page() {
             </div>
           </CardContent>
         </Card>
-      </motion.div>
+      </motion.div>}
 
     </div>
   );

@@ -5,6 +5,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import toast, { Toaster } from "react-hot-toast";
+import { Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 
@@ -78,6 +80,8 @@ const data = [
 
 export default function FeedbackTable() {
   const [tableData, setTableData] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [tableFetchData, setTableFetchData] = useState([]);
 
   useEffect(() => {
     const fetchEmployees = async () => {
@@ -127,6 +131,7 @@ export default function FeedbackTable() {
         // console.log("formattedArr", formatted);
 
         setTableData(formatted);
+        setTableFetchData(formatted);
 
       } catch (error) {
         console.error("Failed to fetch employee data:", error);
@@ -165,9 +170,12 @@ export default function FeedbackTable() {
     );
 
     if (incompleteRows.length > 0) {
-      alert("Please fill in all fields before submitting.");
+      toast.error("Please fill in all fields before submitting.");
       return;
     }
+
+    setIsLoading(true);
+    const toastId = toast.loading("Submitting...");
 
     try {
       const res = await fetch("https://feedbackrml.vercel.app/employee/addFeedBackMasterData", {
@@ -181,16 +189,22 @@ export default function FeedbackTable() {
       const result = await res.json();
 
       if (res.ok) {
-        alert("Data submitted successfully!");
-        setTableData([])
+        // alert("Data submitted successfully!");
+        toast.success("Data submitted successfully!", { id: toastId });
         // console.log("Submitted Data:", result);
       } else {
-        alert("Submission failed. Please try again.");
+        // alert("Submission failed. Please try again.");
+        toast.error("Submission failed. Please try again.", { id: toastId });
         console.error("Error:", result);
       }
     } catch (error) {
       console.error("Error submitting feedback:", error);
-      alert("Something went wrong!");
+      toast.error("Something went wrong!", { id: toastId });
+
+      // alert("Something went wrong!");
+    } finally {
+      setIsLoading(false);
+      setTableData(tableFetchData);
     }
   };
 
@@ -213,19 +227,34 @@ export default function FeedbackTable() {
 
   return (
     <div className="relative">
+    <Toaster position="top-right" 
+     toastOptions={{
+      style: {
+        marginTop: "20px",
+        padding: "12px",
+        fontSize: "16px",
+      },
+    }}
+    />
       {/* Fixed Header with Logout */}
       <div className="fixed top-0 left-0 w-full z-50 bg-white shadow flex items-center justify-between px-6 py-3 border-b border-gray-200">
         <h1 className="text-xl font-semibold text-blue-900">Feedback Form</h1>
         <button
           onClick={handleLogout}
-          className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm"
+          className="bg-red-600 hover:bg-red-700 text-white font-bold px-4 py-2 rounded-md text-[16px] cursor-pointer"
         >
           Logout
         </button>
       </div>
       {/* Main Content */}
-      <div className="mt-20 m-4">
-        <Card className="overflow-auto w-full max-h-[80vh]">
+      <div className={`${isLoading ? "mt-5" : "mt-20"} m-4`}>
+      {isLoading && <Loader2 className="h-10 relative top-95 m-auto w-10 animate-spin" />}
+        <Card
+        //  className="overflow-auto w-full max-h-[80vh]"
+        className={`overflow-auto w-full max-h-[80vh] transition-opacity duration-300 ${
+          isLoading ? "pointer-events-none opacity-50" : ""
+        }`}
+         >
           <CardContent className="p-2">
             <motion.table
               initial={{ opacity: 0 }}
@@ -298,7 +327,7 @@ export default function FeedbackTable() {
           </CardContent>
         </Card>
         <div className="flex justify-center mt-2">
-        <Button className="w-24 bg-green-800 text-xl hover:bg-green-900" onClick={handleSubmit}>Submit</Button>
+        <Button className="w-24 bg-green-800 text-xl hover:bg-green-900 cursor-pointer" onClick={handleSubmit} disabled={isLoading}>Submit</Button>
         </div>
       </div>
     </div>
