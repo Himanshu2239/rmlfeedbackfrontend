@@ -82,13 +82,16 @@ export default function FeedbackTable() {
   const [tableData, setTableData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [tableFetchData, setTableFetchData] = useState([]);
+  const [isVisibleDownload, setIsVisibleDownload] = useState(false);
 
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
         const userDetails = JSON.parse(localStorage.getItem("userDetails"));
-        console.log("userDetails", userDetails);
+        // console.log("userDetails", userDetails);
         const headId = userDetails.empId;
+        if(headId === 'RDL000791')
+         setIsVisibleDownload(true);
         // console.log("headId", headId);
         if (!headId) return;
 
@@ -101,7 +104,7 @@ export default function FeedbackTable() {
         });
 
         const result = await res.json();
-        console.log("result", result);
+        // console.log("result", result);
         const employees = result.data;
 
         // Transform the employee data into tableData format
@@ -160,11 +163,11 @@ export default function FeedbackTable() {
   //   console.log("Submitted Data:", tableData);
   //   alert("Data submitted! Check console for details.");
   // };
-  4
+
 
   const handleSubmit = async () => {
 
-     // Validate all fields are filled
+    // Validate all fields are filled
     const incompleteRows = tableData.filter(row =>
       row.fields.some((field, index) => index > 7 && field.trim() === "")
     );
@@ -208,6 +211,8 @@ export default function FeedbackTable() {
     }
   };
 
+  
+
 
   const ratingIndices = [
     subHeaders.indexOf("Knowledge & Expertise (1-5)"),
@@ -223,22 +228,34 @@ export default function FeedbackTable() {
     localStorage.clear();
     window.location.href = "/login"; // or your login route
   };
-  
+
 
   return (
     <div className="relative">
-    <Toaster position="top-right" 
-     toastOptions={{
-      style: {
-        marginTop: "20px",
-        padding: "12px",
-        fontSize: "16px",
-      },
-    }}
-    />
+      <Toaster position="top-right"
+        toastOptions={{
+          style: {
+            marginTop: "20px",
+            padding: "12px",
+            fontSize: "16px",
+          },
+        }}
+      />
       {/* Fixed Header with Logout */}
       <div className="fixed top-0 left-0 w-full z-50 bg-white shadow flex items-center justify-between px-6 py-3 border-b border-gray-200">
         <h1 className="text-xl font-semibold text-blue-900">Feedback Form</h1>
+        {isVisibleDownload && <button
+          onClick={() => window.open("https://feedbackrml.vercel.app/employee/downloadExcelReport", "_blank")}
+          className="px-4 py-2 bg-green-600 text-white rounded cursor-pointer"
+        >
+          Feedback Report
+        </button>}
+        {isVisibleDownload && <button
+          onClick={() => window.open("https://feedbackrml.vercel.app/employee/downloadNotSubmittedExcelReport", "_blank")}
+          className="px-4 py-2 bg-red-600 text-white rounded cursor-pointer"
+        >
+           Pending Report
+        </button>}
         <button
           onClick={handleLogout}
           className="bg-red-600 hover:bg-red-700 text-white font-bold px-4 py-2 rounded-md text-[16px] cursor-pointer"
@@ -248,13 +265,12 @@ export default function FeedbackTable() {
       </div>
       {/* Main Content */}
       <div className={`${isLoading ? "mt-5" : "mt-20"} m-4`}>
-      {isLoading && <Loader2 className="h-10 relative top-95 m-auto w-10 animate-spin" />}
+        {isLoading && <Loader2 className="h-10 relative top-95 m-auto w-10 animate-spin" />}
         <Card
-        //  className="overflow-auto w-full max-h-[80vh]"
-        className={`overflow-auto w-full max-h-[80vh] transition-opacity duration-300 ${
-          isLoading ? "pointer-events-none opacity-50" : ""
-        }`}
-         >
+          //  className="overflow-auto w-full max-h-[80vh]"
+          className={`overflow-auto w-full max-h-[80vh] transition-opacity duration-300 ${isLoading ? "pointer-events-none opacity-50" : ""
+            }`}
+        >
           <CardContent className="p-2">
             <motion.table
               initial={{ opacity: 0 }}
@@ -327,7 +343,7 @@ export default function FeedbackTable() {
           </CardContent>
         </Card>
         <div className="flex justify-center mt-2">
-        <Button className="w-24 bg-green-800 text-xl hover:bg-green-900 cursor-pointer" onClick={handleSubmit} disabled={isLoading}>Submit</Button>
+          <Button className="w-24 bg-green-800 text-xl hover:bg-green-900 cursor-pointer" onClick={handleSubmit} disabled={isLoading}>Submit</Button>
         </div>
       </div>
     </div>
