@@ -84,16 +84,27 @@ export default function FeedbackTable() {
   const [tableFetchData, setTableFetchData] = useState([]);
   const [isVisibleDownload, setIsVisibleDownload] = useState(false);
 
+
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
+
         const userDetails = JSON.parse(localStorage.getItem("userDetails"));
         // console.log("userDetails", userDetails);
         const headId = userDetails.empId;
+
         if(headId === 'RDL000791')
          setIsVisibleDownload(true);
         // console.log("headId", headId);
         if (!headId) return;
+
+        const savedSessionData = sessionStorage.getItem(`feedback_${headId}`);
+        if (savedSessionData) {
+          setTableData(JSON.parse(savedSessionData));
+          setTableFetchData(JSON.parse(savedSessionData));
+          // setTableFetchData(formatted);
+          return;
+        }
 
         const res = await fetch("https://feedbackrml.vercel.app/employee/getEmployeesByReportingHeadId", {
           method: "POST",
@@ -146,6 +157,8 @@ export default function FeedbackTable() {
 
 
 
+
+
   const handleChange = (rowId, index, value) => {
     setTableData((prev) =>
       prev.map((row) =>
@@ -158,6 +171,15 @@ export default function FeedbackTable() {
       )
     );
   };
+ 
+
+  useEffect(() => {
+    const userDetails = JSON.parse(localStorage.getItem("userDetails"));
+    const headId = userDetails?.empId;
+    if (headId && tableData.length > 0) {
+      sessionStorage.setItem(`feedback_${headId}`, JSON.stringify(tableData));
+    }
+  }, [tableData]);
 
   // const handleSubmit = () => {
   //   console.log("Submitted Data:", tableData);
@@ -207,6 +229,7 @@ export default function FeedbackTable() {
       // alert("Something went wrong!");
     } finally {
       setIsLoading(false);
+      console.log("tableFetchData", tableFetchData)
       setTableData(tableFetchData);
     }
   };
