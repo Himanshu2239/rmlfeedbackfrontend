@@ -350,7 +350,7 @@ export default function FeedbackTable() {
                         ) : (
                           <Textarea
                             value={cell}
-                            className="min-h-[60px] resize rounded-md border border-gray-300 p-2 text-sm"
+                            className="min-h-[6.4rem] min-w-[14rem] resize rounded-md border border-gray-300 p-2 text-sm"
                             // onInput="this.style.height = 'auto'; this.style.height = this.scrollHeight + 'px';"
                             placeholder="Enter text..."
                             onChange={(e) => handleChange(row.id, idx, e.target.value)}
